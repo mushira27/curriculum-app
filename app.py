@@ -11,7 +11,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 import base64
-import pyttsx3  # For AI voice narration
+from gtts import gTTS
+import tempfile
+# For AI voice narration
 # =========================
 # PAGE SETUP
 # =========================
@@ -164,13 +166,17 @@ if uploaded_file:
                 st.success(f" Predicted Class: {prediction}")
 
                 # AI Voice Narration
-                engine = pyttsx3.init()
-                engine.setProperty('rate', 160)
-                engine.setProperty('volume', 1.0)
-                voices = engine.getProperty('voices')
-                engine.setProperty('voice', voices[1].id if len(voices) > 1 else voices[0].id)
-                engine.say(f"The predicted class is {prediction}")
-                engine.runAndWait()
+                tts = gTTS(text=f"The predicted class is {prediction}",lang="en")
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:  
+                    tts.save(fp.name)
+                    st.audio(fp.name)
+                # engine = pyttsx3.init()
+                # engine.setProperty('rate', 160)
+                # engine.setProperty('volume', 1.0)
+                # voices = engine.getProperty('voices')
+                # engine.setProperty('voice', voices[1].id if len(voices) > 1 else voices[0].id)
+                # engine.say(f"The predicted class is {prediction}")
+                # engine.runAndWait()
 
                 # Success Animation
                 st.markdown("""
@@ -220,3 +226,4 @@ with st.sidebar:
     """)
 
 # URL: http://localhost:8501
+

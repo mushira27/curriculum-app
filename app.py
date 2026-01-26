@@ -78,4 +78,62 @@ if uploaded_file:
 
         # Bar Chart
         fig_bar, ax_bar = plt.subplots()
-        sns.barplot(x=pie_data
+        sns.barplot(x=pie_data.index, y=pie_data.values, ax=ax_bar)
+        plt.xticks(rotation=45)
+        st.pyplot(fig_bar)
+
+    # =========================
+    # MACHINE LEARNING
+    # =========================
+    st.markdown("---")
+    st.header("Machine Learning Analysis")
+
+    target = st.selectbox("Select Target Column", df.columns)
+    features = st.multiselect("Select Feature Columns", [c for c in df.columns if c != target])
+
+    if target and features:
+        X = pd.get_dummies(df[features], drop_first=True)
+        y = df[target]
+
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+
+        X_train, X_test, y_train, y_test = train_test_split(
+            X_scaled, y, test_size=0.3, random_state=42, stratify=y
+        )
+
+        model_choice = st.selectbox("Choose Model", ["Logistic Regression", "Random Forest"])
+        model = LogisticRegression(max_iter=200) if model_choice == "Logistic Regression" else RandomForestClassifier()
+
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+
+        st.text(classification_report(y_test, y_pred))
+
+        # =========================
+        # PREDICTION + VOICE
+        # =========================
+        st.markdown("---")
+        st.subheader("Make a Prediction")
+
+        input_data = {}
+        for col in features:
+            if df[col].dtype in ["int64", "float64"]:
+                input_data[col] = st.number_input(col, value=float(df[col].mean()))
+            else:
+                input_data[col] = st.selectbox(col, df[col].unique())
+
+        if st.button("Predict"):
+            input_df = pd.DataFrame([input_data])
+            input_df = pd.get_dummies(input_df, drop_first=True)
+            input_df = input_df.reindex(columns=X.columns, fill_value=0)
+
+            prediction = model.predict(input_df)[0]
+            st.success(f"Predicted Class: {prediction}")
+            st.balloons()
+
+            # Voice (Streamlit Cloud SAFE)
+            tts = gTTS(text=f"The predicted class is {prediction}", lang="en")
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+                tts.save(fp.name)
+                st.audio(fp.name)

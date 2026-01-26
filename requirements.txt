@@ -4,6 +4,6 @@ numpy
 scikit-learn
 matplotlib
 seaborn
-pyttsx3
+gtts
 
 

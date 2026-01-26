@@ -166,7 +166,7 @@ if uploaded_file:
                 st.success(f" Predicted Class: {prediction}")
 
                 # AI Voice Narration
-                tts = gTTS(text=f"The predicted class is {prediction}",lang="en")
+                tts = gTTS(text=str(prediction),lang="en")
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:  
                     tts.save(fp.name)
                     st.audio(fp.name)
@@ -226,4 +226,5 @@ with st.sidebar:
     """)
 
 # URL: http://localhost:8501
+
 

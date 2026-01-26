@@ -17,7 +17,7 @@ import tempfile
 # =========================
 # PAGE SETUP
 # =========================
-st.set_page_config(page_title="Curriculum Gap Analysis", layout="wide")
+st.set_page_config(page_title="Curriculum Gap Analysis",page_icon="📖", layout="wide")
 st.title(" Curriculum Gap Identification Dashboard")
 # =========================
 # BACKGROUND IMAGE FUNCTION
@@ -226,5 +226,6 @@ with st.sidebar:
     """)
 
 # URL: http://localhost:8501
+
 
 
